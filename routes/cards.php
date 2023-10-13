@@ -18,8 +18,8 @@ function cardsRouter($connect, $method, $params)
                 echo $stmt->execute($params);
 
 
-            }
-            getCards($connect);
+            } else
+                getCards($connect);
             break;
         // case 'POST':
         //     $JSONdata = file_get_contents('php://input');
