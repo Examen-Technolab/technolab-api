@@ -7,29 +7,18 @@ function cardsRouter($connect, $method, $params)
 
     switch ($method) {
         case 'GET':
-            if (count($params) > 1) {
-                $id = $params[1];
-                $sql_params = array(':card_id' => $id, ':tab_id' => 1);
 
-                $query = file_get_contents("sql/card.sql");
-
-                $stmt = $connect->prepare($query);
-
-
-                $stmt->execute($sql_params);
-
-                $elementList = array();
-
-
-                while ($element = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    $elementList[] = $element;
-                }
-
-                //return json_encode($elementList);
-                echo json_encode($elementList);
-            } else
-                getCards($connect);
-            break;
+            switch (count($params)) {
+                case 2:
+                    getCardInfo($connect, 'card', array(':id' => $params[1]));
+                    break;
+                case 3:
+                    getCardInfo($connect, 'descriptions', array(':id' => $params[1], ':tab_id' => $params[2]));
+                    break;
+                default:
+                    getCards($connect);
+                    break;
+            }
         // case 'POST':
         //     $JSONdata = file_get_contents('php://input');
         //     $data = json_decode($JSONdata, true);
