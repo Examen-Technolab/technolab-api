@@ -27,9 +27,6 @@ function cardsRouter($connect, $method, $params)
 
                 //return json_encode($elementList);
                 echo json_encode($elementList);
-                print_r($elementList);
-
-
             } else
                 getCards($connect);
             break;
