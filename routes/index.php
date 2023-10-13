@@ -11,8 +11,16 @@ require 'manuals.php';
 
 function useRouter($connect, $params, $method)
 {
-    if ($method == 'GET') {
-        getElements($connect, $params[0]);
+
+    switch ($params[0]) {
+        case 'cards':
+            cardsRouter($connect, $method, $params);
+            break;
+        default:
+            if ($method == 'GET') {
+                getElements($connect, $params[0]);
+            }
+            break;
     }
 
     // switch ($params[0]) {

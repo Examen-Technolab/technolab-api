@@ -7,6 +7,18 @@ function cardsRouter($connect, $method, $params)
 
     switch ($method) {
         case 'GET':
+            if ($params[1]) {
+                $id = $params[1];
+                $params = array(':card_id' => $id, ':tab_id' => 1);
+                $sql_file = "sql/card.sql";
+
+                $query = file_get_contents($sql_file);
+
+                $connect->prepare($query);
+                echo $connect->execute($params);
+
+
+            }
             getCards($connect);
             break;
         // case 'POST':
