@@ -9,13 +9,25 @@ function cardsRouter($connect, $method, $params)
         case 'GET':
             if (count($params) > 1) {
                 $id = $params[1];
-                $params = array(':card_id' => $id, ':tab_id' => 1);
+                $sql_params = array(':card_id' => $id, ':tab_id' => 1);
                 $sql_file = "sql/card.sql";
 
                 $query = file_get_contents($sql_file);
 
                 $stmt = $connect->prepare($query);
-                echo $stmt->execute($params);
+
+
+                $elements = $stmt->execute($sql_params);
+
+                $elementList = array();
+
+
+                while ($element = $elements->fetch(PDO::FETCH_ASSOC)) {
+                    $elementList[] = $element;
+                }
+
+                //return json_encode($elementList);
+                echo json_encode($elementList);
 
 
             } else
