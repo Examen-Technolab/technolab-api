@@ -16,18 +16,18 @@ function cardsRouter($connect, $method, $params)
 
                 $stmt = $connect->prepare($query);
 
+                echo $stmt->execute($sql_params);
+                // $elements = $stmt->execute($sql_params);
 
-                $elements = $stmt->execute($sql_params);
-
-                $elementList = array();
+                // $elementList = array();
 
 
-                while ($element = $elements->fetch(PDO::FETCH_ASSOC)) {
-                    $elementList[] = $element;
-                }
+                // while ($element = $elements->fetch(PDO::FETCH_ASSOC)) {
+                //     $elementList[] = $element;
+                // }
 
-                //return json_encode($elementList);
-                echo json_encode($elementList);
+                // //return json_encode($elementList);
+                // echo json_encode($elementList);
 
 
             } else
