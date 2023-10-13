@@ -14,8 +14,8 @@ function cardsRouter($connect, $method, $params)
 
                 $query = file_get_contents($sql_file);
 
-                $connect->prepare($query);
-                echo $connect->execute($params);
+                $stmt = $connect->prepare($query);
+                echo $stmt->execute($params);
 
 
             }
