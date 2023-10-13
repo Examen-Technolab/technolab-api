@@ -10,12 +10,10 @@ function cardsRouter($connect, $method, $params)
 
             switch (count($params)) {
                 case 2:
-                    $sql_params = array('id' => $params[1]);
-                    getCardInfo($connect, 'card', $sql_params);
+                    getCardInfo($connect, 'card', array(':id' => $params[1]));
                     break;
                 case 3:
-                    $sql_params = array('id' => $params[1], 'tab_id' => $params[2]);
-                    getCardInfo($connect, 'descriptions', $sql_params);
+                    getCardInfo($connect, 'descriptions', array(':card_id' => $params[1], ':tab_id' => $params[2]));
                     break;
                 default:
                     getCards($connect);
