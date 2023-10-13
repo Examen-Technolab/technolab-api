@@ -1,7 +1,7 @@
 <?php
 function getCards($connect)
 {
-    $cards = getElements($connect, 'sql/cards.sql');
+    $cards = getElements($connect, 'cards');
 
     echo ($cards);
 }
