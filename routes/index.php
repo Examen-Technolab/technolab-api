@@ -12,7 +12,7 @@ require 'manuals.php';
 function useRouter($connect, $params, $method)
 {
     if ($method == 'GET') {
-        $sql_file = 'sql/' + $params[0] + '.sql';
+        $sql_file = "sql/$params[0].sql";
         getElements($connect, $sql_file);
     }
 
