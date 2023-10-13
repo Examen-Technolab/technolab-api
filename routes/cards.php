@@ -7,7 +7,7 @@ function cardsRouter($connect, $method, $params)
 
     switch ($method) {
         case 'GET':
-            if ($params[1]) {
+            if (count($params) > 1) {
                 $id = $params[1];
                 $params = array(':card_id' => $id, ':tab_id' => 1);
                 $sql_file = "sql/card.sql";
