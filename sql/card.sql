@@ -5,8 +5,11 @@ p.title,
 p.article,
 p.price,
 p.product,
-pt.type
+ds.title,
+ds.list,
+ds.note,
+ds.tab_id
 FROM cards c
 LEFT JOIN products p on p.id = c.product_id
-LEFT JOIN product_types pt on pt.id = p.type_id
-WHERE c.isHidden = 0
+LEFT JOIN descriptions ds on ds.card_id = c.id
+WHERE c.id = :card_id
