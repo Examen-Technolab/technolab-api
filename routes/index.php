@@ -4,10 +4,6 @@ require './functions/getElements.php';
 require './functions/setElement.php';
 
 require 'cards.php';
-require 'downloads.php';
-require 'contacts.php';
-require 'partners.php';
-require 'manuals.php';
 
 function useRouter($connect, $params, $method)
 {
