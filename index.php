@@ -2,8 +2,8 @@
 //проверяем домен и разрешаем запрос
 $http_origin = $_SERVER['HTTP_ORIGIN'];
 
-//if ($http_origin == "https://test.examen-technolab.ru" || $http_origin == "https://examen-technolab.ru" || $http_origin == "http://localhost:3000") {
-if ($http_origin == "https://test.examen-technolab.ru" || $http_origin == "https://examen-technolab.ru") {
+if ($http_origin == "https://test.examen-technolab.ru" || $http_origin == "https://examen-technolab.ru" || $http_origin == "http://localhost:3000") {
+    //if ($http_origin == "https://test.examen-technolab.ru" || $http_origin == "https://examen-technolab.ru") {
     header("Access-Control-Allow-Origin: $http_origin");
     header("Access-Control-Allow-Credentials: true");
 
