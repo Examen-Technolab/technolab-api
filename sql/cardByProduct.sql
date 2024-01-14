@@ -9,5 +9,4 @@ pt.type
 FROM cards c
 LEFT JOIN products p on p.id = c.product_id
 LEFT JOIN product_types pt on pt.id = p.type_id
-WHERE c.isHidden = 0
-ORDER BY c.ordinal DESC
+WHERE c.isHidden = 0 AND p.product = :product
