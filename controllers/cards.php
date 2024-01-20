@@ -13,7 +13,7 @@ class Cards
         $this->db = $db;
     }
 
-    private function fieldsToString()
+    private function fieldsToString() //переводит поля из массива в строку
     {
         $result = '';
         foreach ($this->fields as &$field) {
@@ -23,8 +23,7 @@ class Cards
         return $result;
     }
 
-
-    private function checkFields($data)
+    private function checkFields($data) //проверка, есть ли все поля в $data
     {
         $result = true;
         foreach ($this->fields as &$field) {
@@ -57,6 +56,22 @@ class Cards
         $this->errHandler->setError(400, '', 'Некорректное тело запроса. Отсутствует одно из полей: ' . $this->fieldsToString());
     }
 
+    private function findCardByID($cardID = false)
+    // найти и вернуть карточку по id, если нет, то в ответе false
+    {
+        return $this->db->runSQLFile('cardByID', array(':id' => $cardID));
+        // если нет карточки с таким id, то вернется false
+    }
+
+    private function findCardByProduct($product)
+    {
+        // вернуть карточку по продукту, лучше по артикулу
+        // если нет карточки с таким продуктом, то возвращает false
+
+        return $this->db->runSQLFile('cardByProduct', array(':product' => $product));
+
+    }
+
     function getCards() // вернуть все карточки
     {
         echo $this->db->runSQLFile('cards');
@@ -69,30 +84,16 @@ class Cards
 
             $cardID = $cardID ? $cardID : $_GET['id'];
 
-            $card = $this->db->runSQLFile('cardByID', array(':id' => $cardID));
+            $card = $this->findCardByID($cardID);
             // если нет карточки с таким id, то вернется false
 
             if (!$card) {
                 $this->errHandler->setError(404, '', 'Нет карточки с таким ID');
                 die();
             }
-
-            return $card;
+            echo $card;
         } else {
             $this->errHandler->setError(400, '', 'Некорректный ID');
-            die();
-        }
-    }
-
-    private function findCardByProduct($product = false)
-    {
-        // вернуть карточку по продукту, лучше по артикулу
-        // если нет карточки с таким продуктом. то возвращает false
-        if ($product || isset($_GET['product'])) {
-            $product = $product ? $product : $_GET['product'];
-            return $this->db->runSQLFile('cardByProduct', array(':product' => $product));
-        } else {
-            $this->errHandler->setError(400, '', 'Некорректный product');
             die();
         }
     }
@@ -108,6 +109,7 @@ class Cards
 
         //если нет такой карты, то добавляем, иначе возвращаем имеющуюся
         // проверяем по полю product - это не очень хорошо
+
         if ($this->findCardByProduct($data['product'])) {
             $this->errHandler->setError(409, '', 'Такой product уже есть');
         } else {
@@ -126,11 +128,11 @@ class Cards
             //формируем массив параметров запроса
             $params = $this->generateParams();
 
-            $oldCard = $this->getCard($cardID); //проверяем, есть ли карточка с таким id
+            $oldCard = $this->findCardByID($cardID); //проверяем, есть ли карточка с таким id
 
             $this->db->runSQLFile('patchCard', array(':id' => $cardID, ...$params));
 
-            echo $this->getCard($cardID);
+            echo $this->findCardByID($cardID);
 
         } else {
             $this->errHandler->setError(400, '', 'Некорректный ID');
@@ -145,7 +147,7 @@ class Cards
 
             $cardID = $cardID ? $cardID : $_GET['id'];
 
-            $card = $this->getCard($cardID);
+            $card = $this->findCardByID($cardID);
 
             $this->db->runSQLFile('deleteCard', array(':id' => $cardID));
 

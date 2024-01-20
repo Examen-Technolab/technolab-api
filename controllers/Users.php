@@ -10,21 +10,30 @@ class Users
         $this->db = $db;
     }
 
-    function checkCookie($jwt) //проверить куки на наличие jwt
+    private function checkCookie($jwt) //проверить куки на наличие валидного jwt
     {
         if (isset($_COOKIE['JWT'])) {
             $token = $_COOKIE['JWT'];
             if ($jwt->validateToken($token)) {
                 // Аутентификация прошла успешно 
-                echo ($jwt->getDataFromToken($token));
-                return true;
+                return $jwt->getDataFromToken($token);
             } else {
                 // Ошибка аутентификации - возвращаем ошибку
-                $this->errHandler->setError(401, '', 'Отказано в доступе.');
+                $this->errHandler->setError(401, '', 'Ошибка аутентификации. Отказано в доступе.');
             }
         }
-        //  $this->errHandler->setError(400, '', 'Отсутствует токен');
         return false;
+    }
+
+    function check($jwt) //проверить jwt и вернуть данные из него
+    {
+
+        $data = $this->checkCookie($jwt);
+
+        if ($data) {
+            echo ($data);
+        } else
+            echo json_encode(array('message' => "не авторизован"));
     }
 
     function login($jwt) // вход

@@ -32,7 +32,7 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
 
     //проверка куков
     $router->start('GET', 'check', function () use ($usersController, $jwt) {
-        $usersController->checkCookie($jwt);
+        $usersController->check($jwt);
     });
 
     //для get запроса по урлу cards возвращаем все карточки
@@ -40,8 +40,10 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
         $cardsController->getCards();
     });
 
-    //для get запроса по урлу card возвращаем карточку с соответствующим id
+    //для get запроса по урлу info возвращаем описание карточки с соответствующим id
     $router->start('GET', 'info', function () use ($db, $errHandler) {
+
+        //вынести в контроллер
         if (isset($_GET['tab'], $_GET['id'])) {
             $cardID = $_GET['id'];
             $tab = $_GET['tab'];
@@ -86,6 +88,8 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
 
     //для post запроса по урлу image загружаем картинку в соответствующую папку на сервере
     $router->start('POST', 'image', function () use ($errHandler) {
+
+        //вынести в контроллер
         $file = file_get_contents('php://input');
         if (isset($_GET['name'], $_GET['dir'], $_GET['mainDir'])) {
             $name = $_GET['name'];
