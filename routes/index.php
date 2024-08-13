@@ -5,6 +5,7 @@ require_once __DIR__ . '/../utils/Router.php';
 // контроллеры
 require_once __DIR__ . '/../controllers/Users.php';
 require_once __DIR__ . '/../controllers/Cards.php';
+require_once __DIR__ . '/../controllers/Info.php';
 
 // авторизация и аутентификация
 require_once __DIR__ . '/../middlewares/auth.php';
@@ -19,6 +20,7 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
 
     $usersController = new Users($db, $errHandler); //контроллер для работы с пользователями
     $cardsController = new Cards($db, $errHandler); //контроллер для работы с карточками
+    $infoController = new Info($db, $errHandler); //контроллер для работы с карточками
 
     //для post запроса по урлу sign-in производим вход пользователя
     $router->start('POST', 'sign-in', function () use ($usersController, $jwt) {
@@ -40,24 +42,14 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
         $cardsController->getCards();
     });
 
-    //для get запроса по урлу info возвращаем описание карточки с соответствующим id
-    $router->start('GET', 'info', function () use ($db, $errHandler) {
-
-        //вынести в контроллер
-        if (isset($_GET['tab'], $_GET['id'])) {
-            $cardID = $_GET['id'];
-            $tab = $_GET['tab'];
-            if ($cardID && is_numeric($cardID)) {
-                echo $db->runSQLFile('descriptions', array(':card_id' => $cardID, ':tab' => $tab));
-            } else
-                echo 'error';
-        } else
-            $errHandler->setError(400, '', 'Переданы некорректные параметры tab или id');
-    });
-
     //для get запроса по урлу card возвращаем карточку с соответствующим id
     $router->start('GET', 'card', function () use ($cardsController) {
         $cardsController->getCard();
+    });
+
+    //для get запроса по урлу info возвращаем описание карточки с соответствующим id
+    $router->start('GET', 'info', function () use ($infoController) {
+        $infoController->getInfo();
     });
 
     //для get запроса по урлу секции возвращаем информацию по секции
@@ -70,6 +62,18 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
     auth($jwt); //защита роутов 
 
     //доступные только админам роуты
+
+    $router->start('POST', 'info', function () use ($infoController) {
+        $infoController->postInfo();
+    });
+
+    $router->start('PATCH', 'info', function () use ($infoController) {
+        $infoController->patchInfo();
+    });
+
+    $router->start('DELETE', 'info', function () use ($infoController) {
+        $infoController->deleteInfo();
+    });
 
     //для post запроса по урлу cards добавляем карточку
     $router->start('POST', 'cards', function () use ($cardsController) {
