@@ -4,7 +4,7 @@ class Cards
     private $db;
     private $errHandler;
 
-    private $fields = array('product', 'preview', 'lastPreview', 'type', 'title', 'article', 'price');
+    private $fields = array('product', 'preview', 'lastPreview', 'type', 'title', 'article', 'price', 'isHidden', 'ordinal');
     //вынести из класса
 
     public function __construct($db, $errHandler)
@@ -44,14 +44,13 @@ class Cards
                 ':product' => $data['product'],
                 ':preview' => $data['preview'],
                 ':lastPreview' => $data['lastPreview'],
-                ':isHidden' => 0, //$data['isHidden'],
+                ':isHidden' => $data['isHidden'],
+                ':ordinal' => $data['ordinal'],
                 ':productType' => $data['type'],
                 ':title' => $data['title'],
                 ':article' => $data['article'],
                 ':price' => $data['price']
             );
-        } else {
-
         }
         $this->errHandler->setError(400, '', 'Некорректное тело запроса. Отсутствует одно из полей: ' . $this->fieldsToString());
     }
@@ -77,12 +76,12 @@ class Cards
         echo $this->db->runSQLFile('cards');
     }
 
-    function getCard($cardID = false) // вернуть карточку по id
+    function getCard() // вернуть карточку по id
     {
         //проверяем передан ли id 
-        if ($cardID || isset($_GET['id'])) {
+        if (isset($_GET['id'])) {
 
-            $cardID = $cardID ? $cardID : $_GET['id'];
+            $cardID = $_GET['id'];
 
             $card = $this->findCardByID($cardID);
             // если нет карточки с таким id, то вернется false
@@ -106,37 +105,45 @@ class Cards
 
         //формируем массив параметров запроса и проверяем поля
         $params = $this->generateParams();
-
+        $product = $data['product'];
         //если нет такой карты, то добавляем, иначе возвращаем имеющуюся
         // проверяем по полю product - это не очень хорошо
 
-        if ($this->findCardByProduct($data['product'])) {
-            $this->errHandler->setError(409, '', 'Такой product уже есть');
+        if ($this->findCardByProduct($product)) {
+            $this->errHandler->setError(409, '', 'Продукт с таким именем уже существует!');
         } else {
             $this->db->runSQLFile('addCard', $params);
         }
-        echo ($this->findCardByProduct($data['product']));
+
+        echo $this->findCardByProduct($product);
     }
 
-    function patchCard($cardID = false) // изменить карточку
+    function patchCard() // изменить карточку
     {
         //проверяем передан ли id 
-        if ($cardID || isset($_GET['id'])) {
+        if (isset($_GET['id'])) {
 
-            $cardID = $cardID ? $cardID : $_GET['id'];
+            $cardID = $_GET['id'];
 
             //формируем массив параметров запроса
             $params = $this->generateParams();
 
             $oldCard = $this->findCardByID($cardID); //проверяем, есть ли карточка с таким id
 
-            $this->db->runSQLFile('patchCard', array(':id' => $cardID, ...$params));
+            if ($oldCard) {
 
-            echo $this->findCardByID($cardID);
+                $this->db->runSQLFile('patchCard', array(':cardId' => $cardID, ...$params));
 
+                echo json_encode(array('data' => $this->findCardByID($cardID)));
+                die();
+            } else {
+                $this->errHandler->setError(404, '', 'Не найдена карточка с таким ID ' . $cardID);
+                die();
+            }
         } else {
-            $this->errHandler->setError(400, '', 'Некорректный ID');
-            die();
+            echo json_encode(array('data' => '$this->findCardByID($cardID)'));
+            // $this->errHandler->setError(400, '', 'Некорректный ID');
+            // die();
         }
     }
 
@@ -156,6 +163,14 @@ class Cards
         } else {
             $this->errHandler->setError(400, '', 'Некорректный ID');
             die();
+        }
+    }
+
+    function getProduct() // найти продукт
+    {
+        if (isset($_GET['product'])) {
+            $products = $this->db->runSQLFile('product', array(':product' => $_GET['product']));
+            echo json_encode(!!$products);
         }
     }
 }

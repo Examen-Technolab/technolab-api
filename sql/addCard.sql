@@ -6,4 +6,4 @@ VALUES (NULL, :product,
 INSERT INTO `cards` (`id`, `product_id`, `preview`, `lastPreview`, `isHidden`, `ordinal`) 
 VALUES (NULL, 
     (SELECT p.id FROM products p WHERE p.product = :product),
-    :preview, :lastPreview, :isHidden, 1000);
+    :preview, :lastPreview, :isHidden, :ordinal);

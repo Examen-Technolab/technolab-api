@@ -66,12 +66,23 @@ class Info
             $cardID = $_GET['id'];
             $tab = $_GET['tab'];
             if ($cardID && is_numeric($cardID)) {
-                echo $this->db->runSQLFile('info', array(':card_id' => $cardID, ':tab' => $tab));
+                $result = $this->db->runSQLFile('info', array(':card_id' => $cardID, ':tab' => $tab));
+                if (!$result)
+                    $result = json_encode([
+                        [
+                            'id' => '',
+                            'title' => '',
+                            'list' => null,
+                            'note' => '',
+                            'tab' =>''
+                        ]
+                    ]);
+                echo $result;
                 die();
             }
         }
         $this->errHandler->setError(400, '', 'Переданы некорректные параметры tab или id');
-
+        die();
         // если нет карточки с таким id, то вернется false
     }
 

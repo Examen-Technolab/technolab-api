@@ -1,0 +1,2 @@
+INSERT INTO `events` (`id`, `code`, `logo`, `title`, `date`, `lastDay`, `btnText`, `btnLink`, `withPage`, `isLinkResult`, `about`, `links`, `description`)
+VALUES (NULL, :code, :logo, :title, :dateString, :lastDay, :btnText, :btnLink, :withPage, :isLinkResult, :about, :links, :description);
