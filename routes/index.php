@@ -8,6 +8,7 @@ require_once __DIR__ . '/../controllers/Cards.php';
 require_once __DIR__ . '/../controllers/Info.php';
 require_once __DIR__ . '/../controllers/Images.php';
 require_once __DIR__ . '/../controllers/Events.php';
+require_once __DIR__ . '/../controllers/Web.php';
 
 // авторизация и аутентификация
 require_once __DIR__ . '/../middlewares/auth.php';
@@ -25,6 +26,7 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
     $infoController = new Info($db, $errHandler); //контроллер для работы с карточками
     $imagesController = new Images($db, $errHandler); //контроллер для работы с картинками
     $eventsController = new Events($db, $errHandler); //контроллер для работы с мероприятиями
+    $webController = new Web($db, $errHandler); //контроллер для работы с вебинарами
 
     //для post запроса по урлу sign-in производим вход пользователя
     $router->start('POST', 'sign-in', function () use ($usersController, $jwt) {
@@ -60,6 +62,11 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
     //для get запроса по урлу info возвращаем описание карточки с соответствующим id
     $router->start('GET', 'info', function () use ($infoController) {
         $infoController->getInfo();
+    });
+
+    //для get запроса по урлу web возвращаем все карточки
+    $router->start('GET', 'web', function () use ($webController) {
+        $webController->getWebs();
     });
 
     //для get запроса по урлу секции возвращаем информацию по секции
@@ -129,6 +136,21 @@ function useRouter($db, $jwt, $errHandler) //запускает соответс
     //для post запроса по урлу image загружаем картинку в соответствующую папку на сервере
     $router->start('DELETE', 'image', function () use ($imagesController) {
         $imagesController->deleteImages();
+    });
+
+    //для post запроса по урлу web добавляем вебинар
+    $router->start('POST', 'web', function () use ($webController) {
+        $webController->postWeb();
+    });
+
+    //для DELETE запроса по урлу event удаляем карточку
+    $router->start('DELETE', 'web', function () use ($webController) {
+        $webController->deleteWeb();
+    });
+
+    //для PATCH запроса по урлу event изменяем карточку
+    $router->start('PATCH', 'web', function () use ($webController) {
+        $webController->patchWeb();
     });
 
     //$router->use('cards', fn() => cardsRouter());
