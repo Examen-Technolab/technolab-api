@@ -43,8 +43,8 @@ class Web
                 ':title' => $data['title'],
                 ':subtitle' => $data['subtitle'],
                 ':about' => $data['about'],
-                ':link' => $data['link'] || '',
-                ':video' => $data['video'] || ''
+                ':link' => $data['link'] ?: '',
+                ':video' => $data['video'] ?: ''
             );
         }
         $this->errHandler->setError(400, '', 'Некорректное тело запроса. Отсутствует одно из полей: ' . $this->fieldsToString());
